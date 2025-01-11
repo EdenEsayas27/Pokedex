@@ -1,19 +1,16 @@
-using pokedex; // Add this line to use the MongoDbSettings class
+using pokedex;
 using pokedex.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
-// Register MongoDbSettings
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-
-// Register PokemonService as a service
-builder.Services.AddScoped<IPokemonService, PokemonService>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register PokemonService and MongoDbSettings
+builder.Services.AddScoped<IPokemonService, PokemonService>();
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
 
 var app = builder.Build();
 
@@ -25,7 +22,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

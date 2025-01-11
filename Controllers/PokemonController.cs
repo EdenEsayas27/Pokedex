@@ -18,21 +18,21 @@ namespace pokedex.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Pokemon>> Get()
+        public async Task<ActionResult<List<Pokemon>>> Get()
         {
-            return await _pokemonService.GetPokemonsAsync();
+            return Ok(await _pokemonService.GetPokemonsAsync());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetPokemon(string id)
+        public async Task<ActionResult<Pokemon>> GetPokemon(string id)
         {
             try
             {
                 return Ok(await _pokemonService.GetPokemonByIdAsync(id));
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-                return NotFound("Pokemon not found");
+                return NotFound(ex.Message);
             }
         }
 
@@ -43,17 +43,17 @@ namespace pokedex.Controllers
             {
                 return Ok(await _pokemonService.GetPokemonByNameAsync(name));
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-                return NotFound("Pokemon not found");
+                return NotFound(ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<ActionResult<Pokemon>> AddPokemon(Pokemon newPokemon)
         {
-            await _pokemonService.AddPokemonAsync(newPokemon);
-            return CreatedAtAction(nameof(GetPokemon), new { id = newPokemon.Id }, newPokemon);
+            var createdPokemon = await _pokemonService.AddPokemonAsync(newPokemon);
+            return CreatedAtAction(nameof(GetPokemon), new { id = createdPokemon.IdString }, createdPokemon);
         }
 
         [HttpPut("{id}")]
@@ -63,9 +63,9 @@ namespace pokedex.Controllers
             {
                 return Ok(await _pokemonService.UpdatePokemonAsync(id, updatedPokemon));
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-                return NotFound("Pokemon not found");
+                return NotFound(ex.Message);
             }
         }
 
@@ -77,9 +77,9 @@ namespace pokedex.Controllers
                 await _pokemonService.DeletePokemonAsync(id);
                 return NoContent();
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-                return NotFound("Pokemon not found");
+                return NotFound(ex.Message);
             }
         }
     }

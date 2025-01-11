@@ -26,60 +26,48 @@ namespace pokedex.Services
 
         public async Task<Pokemon> GetPokemonByIdAsync(string id)
         {
-            // Convert the string ID to ObjectId for MongoDB queries
-            if (!ObjectId.TryParse(id, out ObjectId objectId))
+            if (!ObjectId.TryParse(id, out var objectId))
             {
                 throw new ArgumentException("Invalid ObjectId format", nameof(id));
             }
 
             var pokemon = await _pokemonCollection.Find(p => p.Id == objectId).FirstOrDefaultAsync();
-            if (pokemon == null)
-            {
-                throw new KeyNotFoundException($"Pokemon with ID {id} not found");
-            }
-
-            return pokemon;
+            return pokemon ?? throw new KeyNotFoundException($"Pokemon with ID {id} not found");
         }
 
         public async Task<Pokemon> GetPokemonByNameAsync(string name)
         {
             var pokemon = await _pokemonCollection.Find(p => p.Name == name).FirstOrDefaultAsync();
-            if (pokemon == null)
-            {
-                throw new KeyNotFoundException($"Pokemon with name {name} not found");
-            }
-            return pokemon;
+            return pokemon ?? throw new KeyNotFoundException($"Pokemon with name {name} not found");
         }
 
         public async Task<Pokemon> AddPokemonAsync(Pokemon newPokemon)
         {
-            // MongoDB will automatically generate the ObjectId if it is not provided
             await _pokemonCollection.InsertOneAsync(newPokemon);
-
-            // Return the inserted Pokemon (MongoDB-generated ID will be filled in automatically)
             return newPokemon;
         }
 
         public async Task<Pokemon> UpdatePokemonAsync(string id, Pokemon updatedPokemon)
         {
-            // Convert the string ID to ObjectId for MongoDB queries
-            if (!ObjectId.TryParse(id, out ObjectId objectId))
+            if (!ObjectId.TryParse(id, out var objectId))
             {
                 throw new ArgumentException("Invalid ObjectId format", nameof(id));
             }
 
+            updatedPokemon.Id = objectId; // Ensure correct ID in update
             var result = await _pokemonCollection.ReplaceOneAsync(p => p.Id == objectId, updatedPokemon);
+
             if (result.MatchedCount == 0)
             {
                 throw new KeyNotFoundException($"Pokemon with ID {id} not found for update");
             }
+
             return updatedPokemon;
         }
 
         public async Task<bool> DeletePokemonAsync(string id)
         {
-            // Convert the string ID to ObjectId for MongoDB queries
-            if (!ObjectId.TryParse(id, out ObjectId objectId))
+            if (!ObjectId.TryParse(id, out var objectId))
             {
                 throw new ArgumentException("Invalid ObjectId format", nameof(id));
             }
@@ -89,6 +77,7 @@ namespace pokedex.Services
             {
                 throw new KeyNotFoundException($"Pokemon with ID {id} not found for deletion");
             }
+
             return true;
         }
     }

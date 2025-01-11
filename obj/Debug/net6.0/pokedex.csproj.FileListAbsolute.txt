@@ -66,3 +66,4 @@ C:\Users\User\Desktop\pokedex\bin\Debug\net6.0\MongoDB.Driver.dll
 C:\Users\User\Desktop\pokedex\bin\Debug\net6.0\SharpCompress.dll
 C:\Users\User\Desktop\pokedex\bin\Debug\net6.0\Snappier.dll
 C:\Users\User\Desktop\pokedex\bin\Debug\net6.0\ZstdSharp.dll
+C:\Users\User\Desktop\pokedex\obj\Debug\net6.0\pokedex.sourcelink.json

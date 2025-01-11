@@ -3,21 +3,19 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace pokedex.Models
 {
+    [BsonIgnoreExtraElements] // Ignore fields in MongoDB that are not mapped to the class
     public class Pokemon
     {
-        [BsonId]  // This is MongoDB's default _id
-        public ObjectId Id { get; set; }  // MongoDB handles it as ObjectId
-        
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Ability { get; set; }
-        public int Level { get; set; }
+        [BsonId] // MongoDB default _id
+        public ObjectId Id { get; set; } // Non-nullable Id handled by MongoDB
 
-        // Add a custom property to serialize the ObjectId to string when returning to API
-        [BsonIgnore]
-        public string IdString
-        {
-            get { return Id.ToString(); }
-        }
+        [BsonIgnore] // Ignore this property in MongoDB serialization
+        public string IdString => Id.ToString();
+
+        public string? Name { get; set; } // Nullable string
+        public string? Type { get; set; } // Nullable string
+        public string? Ability { get; set; } // Nullable string
+        public int? Level { get; set; } // Nullable int
+        public DateTime? IdTimestamp { get; set; } // Nullable DateTime
     }
 }
